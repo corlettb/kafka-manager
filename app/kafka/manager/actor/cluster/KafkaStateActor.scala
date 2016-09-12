@@ -282,13 +282,17 @@ case class KafkaManagedOffsetCache(clusterContext: ClusterContext
                     }
                     topicSet += topic
                   case GroupMetadataKey(version, key) =>
-                    val value: GroupMetadata = readGroupMessageValue(key, ByteBuffer.wrap(record.value()))
-                    value.allMemberMetadata.foreach {
-                      mm =>
-                        mm.assignment.foreach {
-                          case (topic, part) =>
-                            groupTopicPartitionMemberMap += (key, topic, part) -> mm
-                        }
+                    if (record.value() == null) {
+                      info("BENC: Got one of those dodgy null messages")
+                    } else {
+                      val value: GroupMetadata = readGroupMessageValue(key, ByteBuffer.wrap(record.value()))
+                      value.allMemberMetadata.foreach {
+                        mm =>
+                          mm.assignment.foreach {
+                            case (topic, part) =>
+                              groupTopicPartitionMemberMap += (key, topic, part) -> mm
+                          }
+                      }
                     }
                 }
               }
