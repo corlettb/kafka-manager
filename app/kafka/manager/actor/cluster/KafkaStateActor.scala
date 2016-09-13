@@ -1119,6 +1119,7 @@ class KafkaStateActor(config: KafkaStateActorConfig) extends BaseClusterQueryCom
   }
 
   override def processQueryRequest(request: QueryRequest): Unit = {
+    log.info(s"Processing $request")
     request match {
       case KSGetTopics =>
         val deleteSet: Set[String] = 

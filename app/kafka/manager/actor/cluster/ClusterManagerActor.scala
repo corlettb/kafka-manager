@@ -229,6 +229,7 @@ class ClusterManagerActor(cmConfig: ClusterManagerActorConfig)
   override def processQueryRequest(request: QueryRequest): Unit = {
     request match {
       case ksRequest: KSRequest =>
+        log.info(s"Calling $kafkaStateActor with $ksRequest")
         context.actorSelection(kafkaStateActor).forward(ksRequest)
 
       case lksRequest: LKSRequest =>
